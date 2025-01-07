@@ -7,13 +7,16 @@ public class MobileJoystick : MonoBehaviour
     [Header(" Elements ")]
     [SerializeField] private RectTransform joystickOutline;
     [SerializeField] private RectTransform joysticKnob;
-
+    public RectTransform JoystickOutline => joystickOutline;
+    public RectTransform JoysticKnob => joysticKnob;
     // Start is called before the first frame update
 
     [Header(" Setting ")]
     [SerializeField] private float moveFactor;
     private Vector3 clickedPosition;
+    private Vector3 move;
     private bool canControl;
+    private float maxdistanceOfKnob = 0.1f;
     void Start()
     {
         HideJoystick();
@@ -44,6 +47,7 @@ public class MobileJoystick : MonoBehaviour
     {
         joystickOutline.gameObject.SetActive(false);
         canControl = false;
+        move = Vector3.zero;
     }
 
     private void ControlJoystick()
@@ -55,11 +59,19 @@ public class MobileJoystick : MonoBehaviour
 
         moveMagnitude = Mathf.Min(moveMagnitude, joystickOutline.rect.width / 2);
 
-        Vector3 move = direction.normalized * 0.2f * moveMagnitude;
+        move = direction.normalized * maxdistanceOfKnob * moveMagnitude;
 
         Vector3 targetPosition = clickedPosition + move;
 
         joysticKnob.position = targetPosition;
 
+        if(Input.GetMouseButtonUp(0)) 
+            HideJoystick();
+
+    }
+    
+    public Vector3 GetMoveVector()
+    {
+        return move;
     }
 }
